@@ -224,27 +224,30 @@ class install_install extends module
 			'S_EXPLAIN'		=> true,
 			'S_LEGEND'		=> false,
 		));
-
-		// Check for PCRE UTF-8 support
-		if (@preg_match('//u', ''))
+		
+		if (version_compare($php_version, '5.4') < 0)
 		{
-			$passed['pcre'] = true;
-			$result = '<strong style="color:green">' . $lang['YES'] . '</strong>';
+			// Check for PCRE UTF-8 support
+			if (@preg_match('//u', ''))
+			{
+				$passed['pcre'] = true;
+				$result = '<strong style="color:green">' . $lang['YES'] . '</strong>';
+			}
+			else
+			{
+				$result = '<strong style="color:red">' . $lang['NO'] . '</strong>';
+			}
+
+			$template->assign_block_vars('checks', array(
+				'TITLE'			=> $lang['PCRE_UTF_SUPPORT'],
+				'TITLE_EXPLAIN'	=> $lang['PCRE_UTF_SUPPORT_EXPLAIN'],
+				'RESULT'		=> $result,
+
+				'S_EXPLAIN'		=> true,
+				'S_LEGEND'		=> false,
+			));
 		}
-		else
-		{
-			$result = '<strong style="color:red">' . $lang['NO'] . '</strong>';
-		}
-
-		$template->assign_block_vars('checks', array(
-			'TITLE'			=> $lang['PCRE_UTF_SUPPORT'],
-			'TITLE_EXPLAIN'	=> $lang['PCRE_UTF_SUPPORT_EXPLAIN'],
-			'RESULT'		=> $result,
-
-			'S_EXPLAIN'		=> true,
-			'S_LEGEND'		=> false,
-		));
-
+		
 /**
 *		Better not enabling and adding to the loaded extensions due to the specific requirements needed
 		if (!@extension_loaded('mbstring'))
